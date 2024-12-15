@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health360 AI - Symptom Checker</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2C3E50;
+            --secondary-color: #3498DB;
+            --accent-color: #E74C3C;
+            --light-bg: #F8F9FA;
+            --gradient-primary: linear-gradient(135deg, #2C3E50, #3498DB);
+            --gradient-secondary: linear-gradient(135deg, #3498DB, #2980B9);
+        }
+
+        * {
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--light-bg);
+            line-height: 1.6;
+            color: #333;
+        }
+
+        .navbar {
+            background: var(--gradient-primary) !important;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .navbar-brand {
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            color: white !important;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .container-symptoms {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .checkbox-group label {
+            display: flex;
+            align-items: center;
+            background: #f4f4f4;
+            padding: 10px 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--secondary-color);
+            border-radius: 5px;
+            margin-right: 10px;
+            position: relative;
+        }
+
+        .checkbox-group input[type="checkbox"]:checked {
+            background-color: var(--secondary-color);
+        }
+
+        .checkbox-group input[type="checkbox"]:checked::after {
+            content: '✓';
+            position: absolute;
+            color: white;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .checkbox-group label:hover {
+            background: var(--secondary-color);
+            color: white;
+        }
+
+        .checkbox-group input[type="checkbox"]:checked ~ span {
+            color: white;
+        }
+
+        .submit-btn {
+            background: var(--gradient-secondary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.4s ease;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .result-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+            animation: slideUp 0.8s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .toggle-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 180px;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.4s ease;
+        }
+
+        .toggle-button:hover {
+            transform: scale(1.05) translateY(-5px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-content {
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .modal-header {
+            background: var(--gradient-primary);
+            color: white;
+        }
+
+        .modal-body {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">Health360 AI</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="#">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Symptoms Container -->
+    <div class="container container-symptoms">
+        <h2 class="text-center mb-4">Select Your Symptoms</h2>
+        <form id="symptomsForm" action="/predict" method="POST">
+            <div class="checkbox-group">
+                <label>
+                    <input type="checkbox" name="symptoms" value="itching">
+                    <span>Itching</span>
+                </label>
+                <label>
+                    <input type="checkbox" name="symptoms" value="vomiting">
+                    <span>Vomiting</span>
+                </label>
+                <label>
+                    <input type="checkbox" name="symptoms" value="skin_rash">
+                    <span>Skin Rash</span>
+                </label>
+                <label>
+                    <input type="checkbox" name="symptoms" value="headache">
+                    <span>Headache</span>
+                </label>
+                <label>
+                    <input type="checkbox" name="symptoms" value="nausea">
+                    <span>Nausea</span>
+                </label>
+                <label>
+                    <input type="checkbox" name="symptoms" value="dizziness">
+                    <span>Dizziness</span>
+                </label>
+                <label>
+                    <input type="checkbox" name="symptoms" value="chills">
+                    <span>Chills</span>
+                </label>
+                <label>
+                    <input type="checkbox" name="symptoms" value="cough">
+                    <span>Cough</span>
+                </label>
+            </div>
+            <div class="text-center mt-4">
+                <button type="submit" class="submit-btn">Check Symptoms</button>
+            </div>
+        </form>
+        <p class="text-center text-muted mt-3">Select up to 3 symptoms</p>
+    </div>
+
+    <!-- Result Container -->
+    <div class="container result-container">
+        <button class="toggle-button" style="background-color: #F39334;">
+            <i class="fas fa-virus me-2"></i>Disease
+        </button>
+        <button class="toggle-button" style="background-color: #268AF3;">
+            <i class="fas fa-info-circle me-2"></i>Description
+        </button>
+        <button class="toggle-button" style="background-color: #F371F9;">
+            <i class="fas fa-shield-alt me-2"></i>Precaution
+        </button>
+        <button class="toggle-button" style="background-color: #F8576F;">
+            <i class="fas fa-pills me-2"></i>Medications
+        </button>
+        <button class="toggle-button" style="background-color: #99F741;">
+            <i class="fas fa-running me-2"></i>Workouts
+        </button>
+        <button class="toggle-button" style="background-color: #E5E23D;">
+            <i class="fas fa-apple-alt me-2"></i>Diets
+        </button>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const checkboxes = document.querySelectorAll('input[name="symptoms"]');
+            const maxSelection = 3;
+
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    const selectedCheckboxes = document.querySelectorAll('input[name="symptoms"]:checked');
+                    if (selectedCheckboxes.length > maxSelection) {
+                        alert('You can only select up to 3 symptoms.');
+                        this.checked = false;
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

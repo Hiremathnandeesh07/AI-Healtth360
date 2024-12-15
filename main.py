@@ -89,9 +89,13 @@ def index():
 @app.route('/predict', methods=['GET', 'POST'])
 def home():
     if request.method == 'POST':
-        symptoms = request.form.get('symptoms')
+        symptoms = request.form.getlist('symptoms')
+        print(type(symptoms))
+        print(symptoms)
         # mysysms = request.form.get('mysysms')
         # print(mysysms)
+        symptoms = ", ".join(symptoms)
+        print(type(symptoms))
         print(symptoms)
         if symptoms =="Symptoms":
             message = "Please either write symptoms or you have written misspelled symptoms"

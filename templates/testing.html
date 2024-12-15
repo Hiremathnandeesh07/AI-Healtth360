@@ -1,215 +1,101 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>HEALTH360 AI</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Symptoms</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Root Variables */
-        :root {
-            --primary-color: #2C3E50;
-            --secondary-color: #3498DB;
-            --accent-color: #E74C3C;
-            --light-bg: #F8F9FA;
-            --glitter-color: rgba(255, 255, 255, 0.8);
+        .card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
-
-        /* Body and Background */
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #2C3E50, #34495E);
-            color: #fff;
-            overflow-x: hidden;
-            position: relative;
-        }
-
-        /* Background Animation */
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.15), transparent 50%);
-            z-index: 1;
-            animation: glitter 10s infinite linear;
-        }
-
-        @keyframes glitter {
-            0% { transform: translateX(0); }
-            50% { transform: translateX(100px); }
-            100% { transform: translateX(0); }
-        }
-
-        /* Navbar */
-        .navbar {
-            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color)) !important;
-            z-index: 10;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-        }
-
-        .navbar-brand {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #FDFEFE !important;
-            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
-        }
-
-        .nav-link {
-            color: #ECF0F1 !important;
-            font-size: 1.2rem;
-            transition: color 0.3s;
-        }
-
-        .nav-link:hover {
-            color: var(--accent-color) !important;
-        }
-
-        /* Main Title */
-        .main-title {
-            font-size: 3rem;
-            font-weight: bold;
-            text-align: center;
-            text-transform: uppercase;
-            background: linear-gradient(90deg, var(--secondary-color), var(--accent-color));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: pulse 3s infinite ease-in-out;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-        }
-
-        /* Form Container */
-        .form-container {
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            padding: 2rem;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-        }
-
-        .form-control {
-            border: 2px solid var(--secondary-color);
-            border-radius: 10px;
-            transition: transform 0.3s ease;
-        }
-
-        .form-control:focus {
+        .card:hover {
             transform: scale(1.05);
-            border-color: var(--accent-color);
         }
-
-        /* Buttons */
-        .speech-btn, .predict-btn {
-            display: inline-block;
-            padding: 0.8rem 2rem;
-            font-size: 1.2rem;
-            border-radius: 30px;
-            color: #fff;
-            background: linear-gradient(to right, var(--secondary-color), var(--accent-color));
-            border: none;
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-
-        .speech-btn:hover, .predict-btn:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.5);
-        }
-
-        /* Result Buttons */
-        .toggle-button {
-            padding: 1rem;
-            border-radius: 15px;
-            font-size: 1rem;
-            font-weight: bold;
-            color: #fff;
-            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
-            transition: transform 0.3s;
-        }
-
-        .toggle-button:hover {
-            transform: scale(1.1);
-        }
-
-        /* Modal */
-        .modal-content {
-            background: rgba(0, 0, 0, 0.9);
-            border-radius: 15px;
-            color: #fff;
-        }
-
-        /* Animated Particles */
-        .particle-container {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        .particle {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 5px;
-            height: 5px;
-            background: var(--glitter-color);
-            border-radius: 50%;
-            animation: float 5s infinite ease-in-out;
-        }
-
-        @keyframes float {
-            0% { transform: translateY(0); }
-            50% { transform: translateY(-100px); opacity: 0.7; }
-            100% { transform: translateY(0); opacity: 1; }
+        .card.selected {
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.7);
+            transform: scale(1.05);
         }
     </style>
 </head>
-<body>
-    <div class="particle-container">
-        <div class="particle" style="animation-delay: 0s; left: 20%;"></div>
-        <div class="particle" style="animation-delay: 1s; left: 50%;"></div>
-        <div class="particle" style="animation-delay: 2s; left: 80%;"></div>
-    </div>
+<body class="bg-gray-100 font-sans">
 
-    <nav class="navbar navbar-expand-lg">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">HEALTH360 AI</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav">
-                    <li class="nav-item"><a class="nav-link" href="#">Home</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">About</a></li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
-    <div class="container">
-        <h1 class="main-title">Predictive Health Advisor</h1>
-        <div class="form-container">
-            <form action="/predict" method="post">
-                <div class="mb-3">
-                    <label for="symptoms" class="form-label">Enter Symptoms:</label>
-                    <input type="text" class="form-control" id="symptoms" name="symptoms" placeholder="E.g., fever, headache">
+    <div class="container mx-auto p-6 bg-white rounded-lg shadow-lg mt-10 max-w-full">
+        <h1 class="text-3xl font-semibold text-center text-blue-600 mb-6">Select Symptoms</h1>
+        <form action="/predict" method="POST">
+            <div class="mb-6">
+                <label for="symptoms" class="block text-lg font-medium text-gray-700 mb-2">Choose Symptoms (Select up to 3)</label>
+                <div class="grid grid-cols-5 gap-4">
+                    <div class="card bg-gray-200 p-4 rounded-lg text-center cursor-pointer hover:bg-blue-200" data-symptom="itching">
+                        <img src="itching.jpg" alt="Itching" class="w-16 h-16 mx-auto mb-2">
+                        <label class="text-lg font-medium">Itching</label>
+                    </div>
+                    <div class="card bg-gray-200 p-4 rounded-lg text-center cursor-pointer hover:bg-blue-200" data-symptom="vomiting">
+                        <img src="vomiting.jpg" alt="Vomiting" class="w-16 h-16 mx-auto mb-2">
+                        <label class="text-lg font-medium">Vomiting</label>
+                    </div>
+                    <div class="card bg-gray-200 p-4 rounded-lg text-center cursor-pointer hover:bg-blue-200" data-symptom="skin_rash">
+                        <img src="skin_rash.jpg" alt="Skin Rash" class="w-16 h-16 mx-auto mb-2">
+                        <label class="text-lg font-medium">Skin Rash</label>
+                    </div>
+                    <div class="card bg-gray-200 p-4 rounded-lg text-center cursor-pointer hover:bg-blue-200" data-symptom="headache">
+                        <img src="headache.jpg" alt="Headache" class="w-16 h-16 mx-auto mb-2">
+                        <label class="text-lg font-medium">Headache</label>
+                    </div>
+                    <div class="card bg-gray-200 p-4 rounded-lg text-center cursor-pointer hover:bg-blue-200" data-symptom="nausea">
+                        <img src="nausea.jpg" alt="Nausea" class="w-16 h-16 mx-auto mb-2">
+                        <label class="text-lg font-medium">Nausea</label>
+                    </div>
+                    <div class="card bg-gray-200 p-4 rounded-lg text-center cursor-pointer hover:bg-blue-200" data-symptom="dizziness">
+                        <img src="dizziness.jpg" alt="Dizziness" class="w-16 h-16 mx-auto mb-2">
+                        <label class="text-lg font-medium">Dizziness</label>
+                    </div>
+                    <div class="card bg-gray-200 p-4 rounded-lg text-center cursor-pointer hover:bg-blue-200" data-symptom="chills">
+                        <img src="chills.jpg" alt="Chills" class="w-16 h-16 mx-auto mb-2">
+                        <label class="text-lg font-medium">Chills</label>
+                    </div>
+                    <div class="card bg-gray-200 p-4 rounded-lg text-center cursor-pointer hover:bg-blue-200" data-symptom="cough">
+                        <img src="cough.jpg" alt="Cough" class="w-16 h-16 mx-auto mb-2">
+                        <label class="text-lg font-medium">Cough</label>
+                    </div>
                 </div>
-                <button type="button" class="speech-btn"><i class="fas fa-microphone"></i> Start Speech Recognition</button>
-                <button type="submit" class="predict-btn"><i class="fas fa-stethoscope"></i> Predict</button>
-            </form>
+            </div>
+
+            <button type="submit" class="w-full py-2 mt-4 bg-blue-600 text-white rounded-lg text-lg font-semibold hover:bg-blue-700 transition">Submit</button>
+        </form>
+
+        <div class="note mt-4 text-center text-gray-500 text-sm">
+            <p>Note: You can select up to 3 symptoms.</p>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const cards = document.querySelectorAll('.card');
+        let selectedSymptoms = [];
+
+        cards.forEach(card => {
+            card.addEventListener('click', () => {
+                if (card.classList.contains('selected')) {
+                    card.classList.remove('selected');
+                    selectedSymptoms = selectedSymptoms.filter(symptom => symptom !== card.getAttribute('data-symptom'));
+                } else {
+                    if (selectedSymptoms.length < 3) {
+                        card.classList.add('selected');
+                        selectedSymptoms.push(card.getAttribute('data-symptom'));
+                    } else {
+                        alert("You can select only up to 3 symptoms.");
+                    }
+                }
+            });
+        });
+
+        document.querySelector('form').addEventListener('submit', (e) => {
+            if (selectedSymptoms.length > 3) {
+                e.preventDefault();
+                alert("You can select only up to 3 symptoms.");
+            }
+        });
+    </script>
+
 </body>
 </html>
